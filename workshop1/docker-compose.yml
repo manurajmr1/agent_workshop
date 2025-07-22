@@ -1,0 +1,36 @@
+version: "3.8"
+
+services:
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: salesdb
+      MYSQL_USER: salesuser
+      MYSQL_PASSWORD: salespass
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  # llama-api:
+  #   image: ollama/ollama:latest
+  #   ports:
+  #     - "8000:11434"
+  #   volumes:
+  #     - ./models:/models
+  #   entrypoint: ["/bin/sh", "-c", "ollama serve & sleep 5 && ollama pull llama3.2:1b && tail -f /dev/null"]
+
+  streamlit:
+    build: ./streamlit
+    ports:
+      - "8501:8501"
+    environment:
+      - LLAMA_API_URL=http://llama-api:11434
+      - MYSQL_HOST=mysql
+      - MYSQL_USER=salesuser
+      - MYSQL_PASSWORD=salespass
+      - MYSQL_DB=salesdb
+    depends_on:
+      - mysql
+      # - llama-api
