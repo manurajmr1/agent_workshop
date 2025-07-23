@@ -2,6 +2,7 @@ version: "3.8"
 
 services:
   mysql:
+    container_name: workshop_mysql
     image: mysql:8.0
     environment:
       MYSQL_ROOT_PASSWORD: root
@@ -22,11 +23,12 @@ services:
   #   entrypoint: ["/bin/sh", "-c", "ollama serve & sleep 5 && ollama pull llama3.2:1b && tail -f /dev/null"]
 
   streamlit:
+    container_name: workshop_streamlit
     build: ./streamlit
     ports:
       - "8501:8501"
     environment:
-      - LLAMA_API_URL=http://llama-api:11434
+      # - LLAMA_API_URL=http://llama-api:11434
       - MYSQL_HOST=mysql
       - MYSQL_USER=salesuser
       - MYSQL_PASSWORD=salespass
