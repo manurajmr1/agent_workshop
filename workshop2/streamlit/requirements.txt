@@ -1,0 +1,8 @@
+streamlit
+mysql-connector-python
+requests
+langchain
+langchain-community
+pyautogen
+python-dotenv
+ag2[openai]
