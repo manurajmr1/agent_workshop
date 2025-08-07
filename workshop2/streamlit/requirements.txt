@@ -6,3 +6,6 @@ langchain-community
 pyautogen
 python-dotenv
 ag2[openai]
+google-generativeai
+vertexai
+ag2[gemini]

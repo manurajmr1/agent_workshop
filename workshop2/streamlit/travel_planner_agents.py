@@ -6,26 +6,38 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-api_base = "http://host.docker.internal:1234/v1"
+# api_base = os.environ.get("LM_STUDIO_API_URL", "http://host.docker.internal:1234/v1")
+# config_list = [
+#     {
+#         "model": "google/gemma-3-4b",
+#         "base_url": api_base,
+#         'api_key': 'NULL',
+#     }
+# ]
+
+# llm_config = {
+#     "config_list": config_list,
+#     "temperature": 1,
+#     "max_tokens": 1000,
+#     "parallel_tool_calls": False,
+# }
+
+# New configuration using Gemini model
 config_list = [
     {
-        "model": "google/gemma-3-4b",
-        "base_url": api_base,
-        'api_key': 'NULL',
-        "price": [0, 0],  # [prompt_price_per_1k, completion_token_price_per_1k]
+        "model": "gemini-2.5-flash-lite",
+        "api_type": "google",
+        "api_key": os.getenv("GEMINI_API_KEY")
     }
 ]
 
 llm_config = {
-    "config_list": config_list,
-    "temperature": 1,
-    "max_tokens": 1000,
-    "parallel_tool_calls": False,
+    "config_list": config_list
 }
 
 traveler_agent = ConversableAgent(
     name="Traveler_Agent",
-    system_message="You are a traveler planning a vacation.",
+    system_message="You are a traveler planning a vacation. Close the conversation in a single chat dont deviate the topic.",
     llm_config=llm_config,
 )
 
@@ -39,14 +51,14 @@ chat_result = traveler_agent.initiate_chat(
     guide_agent,
     message="What are the must-see attractions in Tokyo?",
     summary_method="reflection_with_llm",  # reflection_with_llm, reflection, llm -- see above explanations
-    max_turns=2,
+    max_turns=3,
 )
 
 # print(chat_result)
 
-# print(" \n ***Chat Summary***: \n")
-# # summary is a property of the chat result
-# print(chat_result.summary)
+print(" \n ***Chat Summary***: \n")
+# summary is a property of the chat result
+print(chat_result.summary)
 
 # print(" \nDefault Input Prompt: \n")
 # # The input prompt for the LLM is the following default prompt:

@@ -1,23 +1,40 @@
 import os
 from autogen import ConversableAgent
 from typing import Annotated
+from google import genai
 
-api_base = "http://host.docker.internal:1234/v1"
+# The client gets the API key from the environment variable `GEMINI_API_KEY`.
+client = genai.Client()
+
+# Old configuration - commented out
+# api_base = "http://host.docker.internal:1234/v1"
+# config_list = [
+#     {
+#         "model": "qwen/qwen3-4b",
+#         "base_url": api_base,
+#         'api_key': 'NULL'
+#     }
+# ]
+# 
+# llm_config = {
+#     "config_list": config_list
+# }
+
+# New configuration using Gemini model
 config_list = [
     {
-        "model": "qwen/qwen3-4b",
-        "base_url": api_base,
-        'api_key': 'NULL',
-        # "price": [0, 0],  # [prompt_price_per_1k, completion_token_price_per_1k]
+        "model": "gemini-2.5-flash-lite",
+        "api_type": "google",
+        "api_key": os.getenv("GEMINI_API_KEY")
     }
 ]
 
 llm_config = {
-    "config_list": config_list,
-    # "temperature": 1,
-    # "max_tokens": 1000,
-    # "parallel_tool_calls": False,
+    "config_list": config_list
 }
+
+
+
 # The Initial Agent always returns a given text.
 initial_agent = ConversableAgent(
     name="Initial_Agent",
@@ -51,13 +68,6 @@ reverse_text_agent = ConversableAgent(
     human_input_mode="NEVER",
 )
 
-# The Summarize Agent summarizes the text.
-# summarize_agent = ConversableAgent(
-#     name="Summarize_Agent",
-#     system_message="You summarize the text I give you.",
-#     llm_config=llm_config,
-#     human_input_mode="NEVER",
-# )
 
 # Start a sequence of two-agent chats.
 # Each element in the list is a dictionary that specifies the arguments
@@ -82,17 +92,9 @@ chat_results = initial_agent.initiate_chats(
             "max_turns": 1,
             "summary_method": "last_msg",
         },
-
-        # {
-        #     "recipient": summarize_agent,
-        #     "message": "Summarise the content",
-        #     "max_turns": 2,
-        #     "summary_method": "last_msg",
-        # },
     ]
 )
 
 print("First Chat Summary: ", chat_results[0].summary)
 print("Second Chat Summary: ", chat_results[1].summary)
 print("Third Chat Summary: ", chat_results[2].summary)
-# print("Fourth Chat Summary: ", chat_results[3].summary)

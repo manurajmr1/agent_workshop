@@ -3,20 +3,33 @@ from autogen import AssistantAgent, UserProxyAgent
 import os
 import openai
 
-openai.api_base = "http://host.docker.internal:1234/v1"
-# Define configuration using the OpenAI format expected by autogen
+# api_base = os.environ.get("LM_STUDIO_API_URL", "http://host.docker.internal:1234/v1")
+# config_list = [
+#     {
+#         "model": "google/gemma-3-4b",
+#         "base_url": api_base,
+#         'api_key': 'NULL',
+#     }
+# ]
+
+# llm_config = {
+#     "config_list": config_list,
+#     "temperature": 1,
+#     "max_tokens": 1000,
+#     "parallel_tool_calls": False,
+# }
+
+# New configuration using Gemini model
 config_list = [
     {
-        "model": "llama-3.2-3b-instruct",
-        "base_url": openai.api_base,
-        'api_key': 'NULL',
+        "model": "gemini-2.5-flash-lite",
+        "api_type": "google",
+        "api_key": os.getenv("GEMINI_API_KEY")
     }
 ]
 
 llm_config = {
-    "config_list": config_list,
-    "temperature": 1,
-    "parallel_tool_calls": False,
+    "config_list": config_list
 }
 
 # Create the assistant agent (LLM)
@@ -29,12 +42,13 @@ assistant = AssistantAgent(
 # Create the user proxy agent
 user_proxy = UserProxyAgent(
     name="User",
-    human_input_mode="ALWAYS"
+    human_input_mode="ALWAYS",
+    code_execution_config=False,
 )
 
 def run_agent():
     print("Autogen Local LM Studio Agent")
-    print("Connected to: " + openai.api_base)
+    print("Connected to GEMINI" )
     print("Type 'exit' to quit")
     while True:
         user_input = input("You: ")

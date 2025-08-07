@@ -20,10 +20,13 @@ services:
     ports:
       - "8501:8501"
     environment:
-      - LLAMA_API_URL=http://llama-api:11434
+      - LM_STUDIO_API_URL=hthttp://host.docker.internal:11434
       - MYSQL_HOST=mysql
       - MYSQL_USER=salesuser
       - MYSQL_PASSWORD=salespass
       - MYSQL_DB=salesdb
+      - GEMINI_API_KEY=$GEMINI_API_KEY
+    # extra_hosts:
+    #   - "host.docker.internal:host-gateway" # For Linux compatibility
     depends_on:
       - mysql
